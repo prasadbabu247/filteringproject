@@ -1,0 +1,81 @@
+required packages:
+
+search_fields = ('^ename', '^eno')Django	2.1.5	2.1.5
+
+Faker	1.0.2	1.0.2
+
+django-faker	0.2	0.2
+
+django-rest-framework	0.1.0	0.1.0
+
+djangorestframework	3.9.1	3.9.1
+
+fake-factory	9999.9.9	9999.9.9
+
+pip	10.0.1	19.0.1
+
+python-dateutil	2.8.0	2.8.0
+
+pytz	2018.9	2018.9
+
+setuptools	39.1.0	40.8.0
+
+six	1.12.0	1.12.0
+
+text-unidecode	1.2	1.2
+
+
+
+browsable api:
+search_fields = ('^ename', '^eno')
+search_fields = ('^ename', '=eno')
+search_fields = ('=ename', '^eno')
+search_fields = ('=ename', '=eno')
+search_fields = ('^ename')
+search_fields = ('=eno')
+search_fields = ('^eno')
+http://127.0.0.1:1235/api/?mysearch=99
+
+1)only filtering with ename and eno ..etc:views.py
+class EmployeeAPIView(generics.ListAPIView):
+    queryset=Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    pagination_class = MyPaginatiion
+    #search_fields=('ename','eno')#eno and ename contains either midddle,starts with and ends with
+    #search_fields=( '=eno',)    #eno exactly eual
+    #search_fields = ('^eno',)    #starts with eno
+    #search_fields = ('^ename', '^eno')
+
+
+browsable api:
+
+http://127.0.0.1:1235/api/?mysearch=2#disply all records contains '2'
+
+http://127.0.0.1:1235/api/?mysearch=p#display all records contains 'p'
+
+
+2)only ordering with ename and esal
+class EmployeeAPIView(generics.ListAPIView):
+    queryset=Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    pagination_class = MyPaginatiion
+    #search_fields=('ename','eno')
+    ordering_fields=('eno','esal')
+
+
+browsable apis:
+
+http://127.0.0.1:1235/api/?myordering=-eno
+http://127.0.0.1:1235/api/?myordering=eno
+http://127.0.0.1:1235/api/?myordering=-esal
+http://127.0.0.1:1235/api/?myordering=esal
+
+settings.py:add this data in settings
+
+REST_FRAMEWORK={
+    'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_FILTER_BACKENDS':('rest_framework.filters.SearchFilter','rest_framework.filters.OrderingFilter'),
+    'SEARCH_PARAM':'mysearch',
+    'ORDERING_PARAM':'myordering'
+}
+
